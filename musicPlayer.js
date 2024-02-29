@@ -1,13 +1,13 @@
 import { playIcon, pauseIcon } from '/v2/icons/svgIcons.js';
 
-// Interface Observer para garantir que todos os observers implementem o método update
+// "Interface" Observer para garantir que todos os observers implementem o método update
 class Observer {
     update(event, data) {
         throw new Error("Method 'update(event, data)' must be implemented.");
     }
 }
 
-// Classe Subject abstrata para gerenciar os observers
+// Classe Subject "abstrata" para gerenciar os observers
 class Subject {
     constructor() {
         this.observers = [];
