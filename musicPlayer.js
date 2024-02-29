@@ -29,7 +29,7 @@ class Subject {
     }
 }
 
-// MusicPlayer agora estende Subject
+// MusicPlayer estende Subject
 class MusicPlayer extends Subject {
     constructor() {
         super(); // Chamada ao construtor da classe pai
@@ -89,7 +89,6 @@ class SidebarPlayer extends Observer {
     }
 
     update(event, data) {
-        // Implementação específica para o SidebarPlayer
         switch (event) {
             case 'play':
                 this.playerElement.querySelector('.play').innerHTML = pauseIcon();
@@ -99,7 +98,6 @@ class SidebarPlayer extends Observer {
                 break;
         }
 
-        // Atualização dos detalhes da música independentemente do evento
         if (data.song) {
             this.playerElement.querySelector('.info').innerHTML = `
                 <h1>${data.song.title}</h1>
@@ -117,7 +115,6 @@ class MiniPlayer extends Observer {
     }
 
     update(event, data) {
-        // Implementação específica para o MiniPlayer
         switch (event) {
             case 'play':
                 this.playerElement.querySelector('.play').innerHTML = pauseIcon();
@@ -126,8 +123,6 @@ class MiniPlayer extends Observer {
                 this.playerElement.querySelector('.play').innerHTML = playIcon();
                 break;
         }
-
-        // Atualização dos detalhes da música independentemente do evento
         if (data.song) {
             this.playerElement.querySelector('.info').innerHTML = `
                 <h1>${data.song.title}</h1>
