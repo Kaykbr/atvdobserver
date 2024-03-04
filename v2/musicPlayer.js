@@ -1,4 +1,4 @@
-import { playIcon, pauseIcon } from '/icons/svgIcons.js';
+import { playIcon, pauseIcon } from './icons/svgIcons.js';
 
 // "Interface" Observer para garantir que todos os observers implementem o método update
 class Observer {
