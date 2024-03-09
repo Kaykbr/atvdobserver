@@ -1,3 +1,4 @@
+// Importa os ícones necessários
 import { playIcon, pauseIcon } from './icons/svgIcons.js';
 
 // "Interface" Observer para garantir que todos os observers implementem o método update
@@ -33,17 +34,37 @@ class Subject {
 class MusicPlayer extends Subject {
     constructor() {
         super(); // Chamada ao construtor da classe pai
-        this.state = { song: {}, playing: false };
+        this.state = { song: {}, playing: false, volume: 1 };
+        this.audio = document.createElement("AUDIO");
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Adiciona um ouvinte para alterações no controle de volume
+        this.audio.addEventListener('volumechange', () => {
+            this.state.volume = this.audio.volume;
+            this.notifyObservers('volume', { volume: this.audio.volume });
+        });
     }
 
     play(song) {
-        this.state = { song: song, playing: true };
+        this.state = { song: song, playing: true, volume: this.audio.volume };
+        this.audio.src = song.file;
+        this.audio.play();
         this.notifyObservers('play', this.state);
     }
 
     stop() {
-        this.state = { ...this.state.song, playing: false };
+        this.state = { ...this.state.song, playing: false, volume: this.audio.volume };
+        this.audio.pause();
         this.notifyObservers('stop', this.state);
+    }
+
+    setVolume(volume) {
+        const clampedVolume = Math.max(0, Math.min(1, volume));
+        this.audio.volume = clampedVolume;
+        this.state.volume = clampedVolume;
+        this.notifyObservers('volume', { volume: clampedVolume });
     }
 }
 
@@ -66,6 +87,10 @@ class MainPlayer extends Observer {
             case 'stop':
                 this.audio.pause();
                 this.playerElement.querySelector('.play').innerHTML = playIcon();
+                break;
+            case 'volume':
+                this.audio.volume = data.volume;
+                this.playerElement.querySelector('.volume').value = data.volume;
                 break;
         }
 
@@ -96,6 +121,9 @@ class SidebarPlayer extends Observer {
             case 'stop':
                 this.playerElement.querySelector('.play').innerHTML = playIcon();
                 break;
+            case 'volume':
+                this.playerElement.querySelector('.volume').value = data.volume;
+                break;
         }
 
         if (data.song) {
@@ -121,6 +149,9 @@ class MiniPlayer extends Observer {
                 break;
             case 'stop':
                 this.playerElement.querySelector('.play').innerHTML = playIcon();
+                break;
+            case 'volume':
+                this.playerElement.querySelector('.volume').value = data.volume;
                 break;
         }
         if (data.song) {
@@ -164,6 +195,16 @@ const handlePlay = () => {
     }
 }
 
+const handleVolumeChange = (event) => {
+    const newVolume = parseFloat(event.target.value);
+    player.setVolume(newVolume);
+}
+
 mainPlayerElement.querySelector('.play').addEventListener('click', handlePlay);
+mainPlayerElement.querySelector('.volume').addEventListener('input', handleVolumeChange);
+
 sidebarPlayerElement.querySelector('.play').addEventListener('click', handlePlay);
+sidebarPlayerElement.querySelector('.volume').addEventListener('input', handleVolumeChange);
+
 miniPlayerElement.querySelector('.play').addEventListener('click', handlePlay);
+miniPlayerElement.querySelector('.volume').addEventListener('input', handleVolumeChange);
